@@ -1,5 +1,7 @@
 # VXP API Gateway - Send & Receive Documents
 
+🚀 **GitHub:** https://github.com/PVN-Organization/API-Gateway-iOffice
+
 API Gateway trung gian thông minh để gửi và nhận văn bản qua VXP SDK.
 
 **🎉 PRODUCTION READY - Docker Image: 93.6MB**
@@ -151,15 +153,38 @@ docker-compose down
 docker-compose up -d --build
 ```
 
-#### 5. Custom Credentials
+#### 5. Environment Variables Configuration ⭐ NEW!
+
+**Config thông tin đơn vị qua ENV - KHÔNG cần truyền meta qua API:**
+
 ```bash
 docker run -d \
   --name vxp-gateway \
   -p 8080:8080 \
-  -e SYSTEM_ID=your-system-id \
+  -e SYSTEM_ID=vxp.saas.03 \
   -e SECRET_KEY=your-secret-key \
+  -e ORG_ID=vxp.saas.03 \
+  -e ORG_IN_CHARGE="Đơn vị test vxp 3" \
+  -e ORG_NAME="Đơn vị test vxp 3" \
+  -e ORG_ADDRESS="Số 1, Hà Nội" \
+  -e ORG_EMAIL="contact@example.vn" \
+  -e ORG_TELEPHONE="+84 24 1234 5678" \
+  -e ORG_FAX="+84 24 8765 4321" \
+  -e ORG_WEBSITE="https://example.vn" \
   --restart unless-stopped \
   vxp-api-gateway:latest
+```
+
+**Lợi ích:**
+- ✅ Không cần truyền `meta.from` qua API
+- ✅ Gateway tự động sử dụng ENV cho FROM info
+- ✅ API chỉ cần truyền `to` và file
+- ✅ Đơn giản hóa API calls
+
+**Ví dụ với docker-compose.yml:**
+```yaml
+# docker-compose.yml đã có sẵn cấu hình đầy đủ
+docker-compose up -d
 ```
 
 ### Option 2: Direct Java (Without Docker)
@@ -215,16 +240,20 @@ curl "http://localhost:8080/api/agencies?id=vxp.saas.03"
 # Tạo test file
 echo "This is a test document from VXP Gateway" > test_document.txt
 
-# Send single document (Gateway tự động wrap thành EDXML!)
+# Option A: Với ENV Config (RECOMMENDED - đơn giản nhất!)
 curl -X POST http://localhost:8080/api/documents/send \
-  -F "fromCode=vxp.saas.03" \
-  -F "toCode=vxp.saas.02" \
+  -F 'to=[{"organId":"vxp.saas.02"}]' \
+  -F "file=@test_document.txt"
+
+# Option B: Với meta JSON (không dùng ENV)
+curl -X POST http://localhost:8080/api/documents/send \
+  -F 'meta={"from":{"organId":"vxp.saas.03","organizationInCharge":"Đơn vị test vxp 3","organName":"Đơn vị test vxp 3"},"to":[{"organId":"vxp.saas.02"}]}' \
   -F "file=@test_document.txt"
 
 # Response:
 # {
 #   "success": true,
-#   "message": "Document sent successfully (File đã được Gateway wrap thành EDXML)",
+#   "message": "Document sent successfully",
 #   "data": {
 #     "docId": "68edb8c8c2dcb14db773ce44",
 #     "fileName": "test_document.txt"
@@ -232,17 +261,17 @@ curl -X POST http://localhost:8080/api/documents/send \
 # }
 ```
 
-**Send Multiple Documents (Batch) ⭐:**
+**Send Multiple Documents (Aggregate Mode) ⭐:**
 ```bash
 # Tạo nhiều test files
 echo "File 1 content" > file1.txt
 echo "File 2 content" > file2.txt  
 echo "File 3 content" > file3.txt
 
-# Send NHIỀU files cùng lúc!
+# Aggregate: Gộp 3 files → 1 EDXML (với ENV config)
 curl -X POST http://localhost:8080/api/documents/send/batch \
-  -F "fromCode=vxp.saas.03" \
-  -F "toCode=vxp.saas.02" \
+  -F 'to=[{"organId":"vxp.saas.02"}]' \
+  -F "aggregate=true" \
   -F "file=@file1.txt" \
   -F "file=@file2.txt" \
   -F "file=@file3.txt"
