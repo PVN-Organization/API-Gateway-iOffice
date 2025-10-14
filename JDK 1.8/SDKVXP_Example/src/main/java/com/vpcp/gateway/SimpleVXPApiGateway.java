@@ -42,8 +42,8 @@ public class SimpleVXPApiGateway {
         // Initialize pipeline
         initializePipeline(systemId, secret);
         
-        // Create HTTP server
-        HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
+        // Create HTTP server (bind to 0.0.0.0 for external access)
+        HttpServer server = HttpServer.create(new InetSocketAddress("0.0.0.0", port), 0);
         
         // Register handlers
         server.createContext("/api/", new MainHandler());
@@ -55,7 +55,7 @@ public class SimpleVXPApiGateway {
         System.out.println("=====================================");
         System.out.println("🚀 VXP API Gateway Started!");
         System.out.println("=====================================");
-        System.out.println("📡 Server: http://localhost:" + port);
+        System.out.println("📡 Server: http://0.0.0.0:" + port);
         System.out.println("");
         System.out.println("📖 Endpoints:");
         System.out.println("");

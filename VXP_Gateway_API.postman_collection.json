@@ -89,17 +89,24 @@
 							"mode": "formdata",
 							"formdata": [
                                 {
-                                    "key": "meta",
+                                    "key": "to",
                                     "type": "text",
-                                    "value": "{\n  \"from\": {\n    \"organId\": \"vxp.saas.03\",\n    \"organizationInCharge\": \"Đơn vị test vxp 3\",\n    \"organName\": \"Đơn vị test vxp 3\",\n    \"organAdd\": \"Số 1, Hà Nội\",\n    \"email\": \"contact-vxp3@example.vn\",\n    \"telephone\": \"+84 24 1234 5678\",\n    \"fax\": \"+84 24 8765 4321\",\n    \"website\": \"https://vxp3.example.vn\"\n  },\n  \"to\": [{\n    \"organId\": \"vxp.saas.03\",\n    \"organizationInCharge\": \"Đơn vị test vxp 3\",\n    \"organName\": \"Đơn vị test vxp 3\"\n  }],\n  \"subject\": \"Tiêu đề thử\",\n  \"content\": \"Nội dung mô tả\",\n  \"codeNotation\": \"GW-AUTO\",\n  \"place\": \"Hà Nội\",\n  \"signerFullName\": \"Nguyễn Văn A\"\n}",
-                                    "description": "Meta JSON (REQUIRED): from/to with organId, organizationInCharge, organName, và các field khác"
+                                    "value": "[{\"organId\": \"vxp.saas.03\"}]",
+                                    "description": "Người nhận (organId required, các field khác optional)"
                                 },
 								{
 									"key": "file",
 									"type": "file",
 									"src": "/Users/duyphuongpham/Downloads/20220209_java_SDKVXP_Example/test_document.txt",
-									"description": "Any file - Gateway tự động wrap thành EDXML và áp dụng meta"
-								}
+									"description": "Any file - Gateway tự động wrap thành EDXML"
+								},
+                                {
+                                    "key": "meta",
+                                    "type": "text",
+                                    "value": "",
+                                    "description": "⚠️ OPTIONAL nếu đã config ENV. Full example:\n{\"from\":{\"organId\":\"vxp.saas.03\",\"organizationInCharge\":\"...\",\"organName\":\"...\"},\"to\":[{\"organId\":\"vxp.saas.03\"}],\"subject\":\"...\"}",
+                                    "disabled": true
+                                }
 							]
 						},
 						"url": {
@@ -109,7 +116,7 @@
 							"port": "8080",
 							"path": ["api", "documents", "send"]
 						},
-                        "description": "Send file - Gateway tự động wrap to EDXML\n\n🤖 Gateway tự động:\n✅ Validate file\n✅ Wrap thành EDXML (kể cả file đã là EDXML)\n✅ Áp dụng meta vào EDXML header\n✅ Send to VXP Server\n\n📝 'meta' (JSON) - REQUIRED:\n{\n  \"from\": {\n    \"organId\": \"vxp.saas.03\",\n    \"organizationInCharge\": \"Đơn vị test vxp 3\",\n    \"organName\": \"Đơn vị test vxp 3\",\n    \"organAdd\": \"Số 1, Hà Nội\",\n    \"email\": \"contact@example.vn\",\n    \"telephone\": \"+84...\",\n    \"fax\": \"+84...\",\n    \"website\": \"https://...\"\n  },\n  \"to\": [{\n    \"organId\": \"vxp.saas.03\",\n    \"organizationInCharge\": \"Đơn vị test vxp 3\",\n    \"organName\": \"Đơn vị test vxp 3\"\n  }],\n  \"subject\": \"Tiêu đề\",\n  \"content\": \"Mô tả\",\n  \"codeNotation\": \"GW-AUTO\",\n  \"place\": \"Hà Nội\",\n  \"signerFullName\": \"Nguyễn Văn A\"\n}\n\n⚠️ Chỉ cần meta + file. Gateway tự động xử lý tất cả!\n\n📦 Batch aggregate: /api/documents/send/batch với aggregate=true"
+                        "description": "Send file - Gateway tự động wrap to EDXML\n\n🤖 Gateway tự động:\n✅ Validate file\n✅ Wrap thành EDXML\n✅ Áp dụng meta/ENV vào EDXML header\n✅ Send to VXP Server\n\n💡 Simplified API với ENV Config:\n\n**Option A (RECOMMENDED):** Với ENV vars đã config\n- Chỉ cần: to + file\n- FROM lấy từ ENV (ORG_ID, ORG_NAME, etc.)\n\n**Option B:** Không dùng ENV\n- Cần: meta (full from/to) + file\n\n📝 'to' - REQUIRED:\n[{\"organId\": \"vxp.saas.02\"}]\n\n📝 'meta' - OPTIONAL nếu có ENV:\n{\n  \"from\": {\"organId\": \"...\", \"organizationInCharge\": \"...\"},\n  \"to\": [{\"organId\": \"...\"}],\n  \"subject\": \"...\"\n}\n\n📦 Aggregate: /api/documents/send/batch với aggregate=true"
 					}
 				},
 				{
@@ -121,10 +128,10 @@
 							"mode": "formdata",
 							"formdata": [
 								{
-									"key": "meta",
+									"key": "to",
 									"type": "text",
-									"value": "{\n  \"from\": {\n    \"organId\": \"vxp.saas.03\",\n    \"organizationInCharge\": \"Đơn vị test vxp 3\",\n    \"organName\": \"Đơn vị test vxp 3\"\n  },\n  \"to\": [{\n    \"organId\": \"vxp.saas.03\",\n    \"organizationInCharge\": \"Đơn vị test vxp 3\",\n    \"organName\": \"Đơn vị test vxp 3\"\n  }],\n  \"subject\": \"Tài liệu gộp\",\n  \"content\": \"Gửi nhiều file trong 1 EDXML\"\n}",
-									"description": "Meta for EDXML header"
+									"value": "[{\"organId\": \"vxp.saas.03\"}]",
+									"description": "Người nhận"
 								},
 								{
 									"key": "aggregate",
@@ -159,7 +166,7 @@
 							"port": "8080",
 							"path": ["api", "documents", "send", "batch"]
 						},
-						"description": "Aggregate: nhiều files → 1 EDXML\n\n🤖 Gateway tự động:\n✅ Gộp nhiều file vào 1 EDXML\n✅ 1 docId duy nhất\n✅ Tất cả files thành attachments\n✅ Áp dụng meta vào header\n\nRequired:\n- meta (JSON): from/to info\n- aggregate=true\n- Nhiều 'file' fields\n\n⚠️ Chỉ cần meta + aggregate + files. Gateway tự động xử lý!"
+						"description": "Aggregate: nhiều files → 1 EDXML\n\n🤖 Gateway tự động:\n✅ Gộp nhiều file vào 1 EDXML\n✅ 1 docId duy nhất\n✅ Tất cả files thành attachments\n✅ Áp dụng ENV/meta vào header\n\n💡 Với ENV config:\n- Chỉ cần: to + aggregate=true + files\n- FROM tự động từ ENV\n\n📝 Required:\n- to: [{\"organId\": \"...\"}]\n- aggregate: true\n- Nhiều 'file' fields"
 					}
 				},
 				{
@@ -342,16 +349,16 @@
 							"mode": "formdata",
 							"formdata": [
                                 {
-                                    "key": "meta",
+                                    "key": "to",
                                     "type": "text",
-                                    "value": "{\n  \"from\": {\n    \"organId\": \"vxp.saas.03\",\n    \"organizationInCharge\": \"Đơn vị test vxp 3\",\n    \"organName\": \"Đơn vị test vxp 3\"\n  },\n  \"to\": [{\n    \"organId\": \"vxp.saas.03\",\n    \"organizationInCharge\": \"Đơn vị test vxp 3\",\n    \"organName\": \"Đơn vị test vxp 3\"\n  }]\n}",
-                                    "description": "Meta JSON (REQUIRED): from/to info"
+                                    "value": "[{\"organId\": \"vxp.saas.03\"}]",
+                                    "description": "Người nhận"
                                 },
                                 {
 									"key": "file",
 									"type": "file",
 									"src": "/Users/duyphuongpham/Downloads/20220209_java_SDKVXP_Example/test_document.txt",
-									"description": "Test file - Gateway tự động wrap và áp dụng meta"
+									"description": "Test file - FROM tự động từ ENV"
                                 }
 							]
 						},
