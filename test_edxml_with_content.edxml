@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<edXML xmlns="http://www.mic.gov.vn/TBT/QCVN_102_2016">
+  <edXML:edXMLEnvelope xmlns:edXML="http://www.mic.gov.vn/TBT/QCVN_102_2016">
+    <edXML:edXMLHeader>
+      <edXML:MessageHeader>
+        <edXML:From>
+          <edXML:OrganId>vxp.saas.03</edXML:OrganId>
+          <edXML:OrganName>Test From</edXML:OrganName>
+        </edXML:From>
+        <edXML:To>
+          <edXML:OrganId>vxp.saas.03</edXML:OrganId>
+          <edXML:OrganName>Test To</edXML:OrganName>
+        </edXML:To>
+        <edXML:DocumentId>test-123</edXML:DocumentId>
+        <edXML:Code>
+          <edXML:CodeNumber>123</edXML:CodeNumber>
+          <edXML:CodeNotation>TEST</edXML:CodeNotation>
+        </edXML:Code>
+        <edXML:Subject>Test Subject</edXML:Subject>
+      </edXML:MessageHeader>
+    </edXML:edXMLHeader>
+    <edXML:edXMLBody>
+      <edXML:edXMLManifest version="1.0">
+        <edXML:Reference>
+          <edXML:ContentId>cid:test-123</edXML:ContentId>
+          <edXML:ContentType>text/plain</edXML:ContentType>
+          <edXML:AttachmentName>test.txt</edXML:AttachmentName>
+        </edXML:Reference>
+      </edXML:edXMLManifest>
+    </edXML:edXMLBody>
+  </edXML:edXMLEnvelope>
+  <AttachmentEncoded>
+    <Attachment>
+      <ContentId>cid:test-123</ContentId>
+      <AttachmentName>test.txt</AttachmentName>
+      <ContentType>application/zip</ContentType>
+      <edXML:ContentTransferEncoded xmlns:edXML="http://www.mic.gov.vn/TBT/QCVN_102_2016">UEsDBBQACAgIAOGATlsAAAAAAAAAAAAAAAAoAAAAOGNkZWEzZGItNzY0ZS00NDRjLWE5MGUtNWY1ZmRlNGIyZGIzLnR4dMtIzcnJBwBQSwcIhqYQNgcAAAAFAAAAUEsBAhQAFAAICAgA4YBOW4amEDYHAAAABQAAACgAAAAAAAAAAAAAAAAAAAAAADhjZGVhM2RiLTc2NGUtNDQ0Yy1hOTBlLTVmNWZkZTRiMmRiMy50eHRQSwUGAAAAAAEAAQBWAAAAXQAAAAA=</edXML:ContentTransferEncoded>
+    </Attachment>
+  </AttachmentEncoded>
+</edXML>

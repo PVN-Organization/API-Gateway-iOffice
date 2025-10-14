@@ -1,0 +1,38 @@
+# Git
+.git
+.gitignore
+
+# Documentation
+*.md
+*.txt
+!JDK*/
+
+# Logs
+*.log
+nohup.out
+
+# IDE
+.idea
+.vscode
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test files
+test_*.sh
+*.sh
+!docker-*.sh
+
+# Postman
+*.postman_collection.json
+*.postman_environment.json
+
+# Maven target - KEEP target/classes (needed for Docker)
+# JDK*/SDKVXP_Example/target
+
+# Temp files
+/tmp
+*.tmp
+

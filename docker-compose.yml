@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  vxp-gateway:
+    image: vxp-api-gateway:latest
+    container_name: vxp-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      # VXP Connection
+      SYSTEM_ID: "vxp.saas.03"
+      SECRET_KEY: "A7TKG/r2gOKTEpe1MhWx6zw8O4JfzN0KkCRS6HZY81Ve"
+      
+      # Organization Info (FROM - đơn vị gửi)
+      # Nếu set các ENV này, API không cần truyền meta.from
+      ORG_ID: "vxp.saas.03"
+      ORG_IN_CHARGE: "Đơn vị test vxp 3"
+      ORG_NAME: "Đơn vị test vxp 3"
+      ORG_ADDRESS: "Số 1, Hà Nội"
+      ORG_EMAIL: "contact-vxp3@example.vn"
+      ORG_TELEPHONE: "+84 24 1234 5678"
+      ORG_FAX: "+84 24 8765 4321"
+      ORG_WEBSITE: "https://vxp3.example.vn"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/api/health"]
+      interval: 30s
+      timeout: 3s
+      start_period: 40s
+      retries: 3
