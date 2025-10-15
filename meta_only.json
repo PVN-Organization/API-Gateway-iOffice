@@ -1,6 +1,0 @@
-{
-  "from": {"organId": "vxp.saas.03", "organizationInCharge": "Đơn vị test vxp 3", "organName": "Đơn vị test vxp 3"},
-  "to": [{"organId": "vxp.saas.03", "organizationInCharge": "Đơn vị test vxp 3", "organName": "Đơn vị test vxp 3"}],
-  "subject": "Test không có fromCode toCode",
-  "content": "Chỉ dùng meta"
-}
