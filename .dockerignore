@@ -29,8 +29,9 @@ test_*.sh
 *.postman_collection.json
 *.postman_environment.json
 
-# Maven target - KEEP target/classes (needed for Docker)
-# JDK*/SDKVXP_Example/target
+# Maven target - Ignore (will compile in Docker with Java 8)
+JDK*/SDKVXP_Example/target/
+**/target/
 
 # Temp files
 /tmp
