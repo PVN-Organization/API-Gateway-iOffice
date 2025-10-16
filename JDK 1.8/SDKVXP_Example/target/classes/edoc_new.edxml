@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
+1212<?xml version="1.0" encoding="UTF-8"?>
 <edXML xmlns="http://www.mic.gov.vn/TBT/QCVN_102_2016">
   <edXML:edXMLEnvelope xmlns:edXML="http://www.mic.gov.vn/TBT/QCVN_102_2016">
     <edXML:edXMLHeader>
       <edXML:MessageHeader>
         <edXML:From>
-          <edXML:OrganId>000.00.00.A80</edXML:OrganId>
+          <edXML:OrganId>002.00.20.H13</edXML:OrganId>
           <edXML:OrganizationInCharge>UBND xã Hòa Tiến - UBND huyện Hòa Vang - Thành phố Đà Nẵng</edXML:OrganizationInCharge>
           <edXML:OrganName>UBND xã Hòa Tiến - UBND huyện Hòa Vang - Thành phố Đà Nẵng</edXML:OrganName>
           <edXML:OrganAdd>Số 1 Hoàng Hoa Thám, Quận Ba Đình, Hà Nội</edXML:OrganAdd>
@@ -16,7 +16,7 @@
         
         <edXML:To>
           <edXML:OrganId>28.22.H17</edXML:OrganId>
-          <edXML:OrganizationInCharge>UBND xã Hòa Sơn - UBND huyện Hòa Vang - Thành phố Đà Nẵng</edXML:OrganizationInCharge>
+          <edXML:OrganizationInCharge> UBND xã Hòa Sơn - UBND huyện Hòa Vang - Thành phố Đà Nẵng</edXML:OrganizationInCharge>
           <edXML:OrganName>UBND xã Hòa Sơn - UBND huyện Hòa Vang - Thành phố Đà Nẵng</edXML:OrganName>
           <edXML:OrganAdd>số 62 - Võ Thị Sáu - Ngô Quyền - Hải Phòng</edXML:OrganAdd>
           <edXML:Email>bxd@moc.gov.vn</edXML:Email>

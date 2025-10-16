@@ -111,7 +111,10 @@ public class EdxmlAggregateBuilder {
             try (FileOutputStream fos = new FileOutputStream(tmp)) {
                 fos.write(fp.getContent());
             }
-            ed.addAttachment(new Attachment(String.valueOf(200 + idx), name, name, tmp));
+            // Use unique ContentId with UUID to avoid conflicts
+            String contentId = "cid:" + java.util.UUID.randomUUID().toString();
+            System.out.println("[EDXML-AGG] Adding attachment " + idx + ": " + name + " with ContentId: " + contentId);
+            ed.addAttachment(new Attachment(contentId, name, name, tmp));
             idx++;
         }
 

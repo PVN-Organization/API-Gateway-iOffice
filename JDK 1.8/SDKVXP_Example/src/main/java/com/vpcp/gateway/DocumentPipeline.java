@@ -274,10 +274,10 @@ public class DocumentPipeline {
                 }
             }
 
-            // Build aggregated EDXML using SDK builder
+            // Build aggregated EDXML using Manual builder (supports multiple attachments correctly)
             java.util.List<String> toCodes = new java.util.ArrayList<>();
             for (String c : toCodeComma.split(",")) { if (c != null && !c.trim().isEmpty()) toCodes.add(c.trim()); }
-            String edxmlPath = EdxmlAggregateBuilder.buildAggregatedEdxml(this.uploadDir, fromCode, toCodes, files, meta);
+            String edxmlPath = ManualEdxmlBuilder.buildAggregatedEdxml(this.uploadDir, fromCode, toCodes, files, meta);
 
             // Header JSON (use systemId for SDK header)
             String jsonHeader = buildSendEdocHeader(systemId, "eDoc", "edoc");
