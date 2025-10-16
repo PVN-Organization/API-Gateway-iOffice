@@ -1,0 +1,33 @@
+# Test files
+*.txt
+!README.txt
+!org.txt
+
+# Logs
+*.log
+
+# Deployment packages
+*.tar.gz
+*.zip
+
+# Shell scripts (deploy manually)
+deploy-to-62.sh
+
+# Taskstream forge (separate project)
+taskstream-forge/
+
+# Temp files
+nohup.out
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# Maven
+target/
+!target/classes/
+
+# JDK 1.7 (not used)
+JDK 1.7/
+
