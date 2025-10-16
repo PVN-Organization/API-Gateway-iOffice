@@ -374,6 +374,8 @@ public class SimpleVXPApiGateway {
                         if (d.toCode != null && toCode == null) toCode = d.toCode;
                     }
                     
+                    System.out.println("  📋 Aggregate params: fromCode=" + fromCode + ", toCode=" + toCode + ", metaJson=" + (metaJson != null ? "present" : "null"));
+                    
                     // Let DocumentPipeline derive fromCode/toCode from metaJson if not provided
                     SendDocumentResponse agg = documentPipeline.sendDocumentsAggregated(
                         fromCode,
@@ -568,7 +570,7 @@ public class SimpleVXPApiGateway {
                         serviceType = extractFieldValue(part);
                     } else if ("messageType".equals(name) || "messagetype".equals(name)) {
                         messageType = extractFieldValue(part);
-                    } else if ("meta".equals(name) || "metadata".equals(name)) {
+                    } else if ("meta".equals(name) || "metadata".equals(name) || "metaJson".equals(name)) {
                         metaJson = extractFieldValue(part);
                     } else if ("aggregate".equals(name)) {
                         aggregateFlag = extractFieldValue(part);
