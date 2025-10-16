@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   vxp-gateway:
+    build: .
     image: vxp-api-gateway:latest
     container_name: vxp-gateway
     ports:
