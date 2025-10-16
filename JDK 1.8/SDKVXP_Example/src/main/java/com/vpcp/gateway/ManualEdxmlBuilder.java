@@ -89,6 +89,7 @@ public class ManualEdxmlBuilder {
         xml.append("        </edXML:PromulgationInfo>\n");
         xml.append("        <edXML:DocumentType>\n");
         xml.append("          <edXML:Type>1</edXML:Type>\n");
+        xml.append("          <edXML:TypeDetail>0</edXML:TypeDetail>\n");
         xml.append("          <edXML:TypeName>Công văn</edXML:TypeName>\n");
         xml.append("        </edXML:DocumentType>\n");
         xml.append("        <edXML:Subject>").append(escapeXml(subject)).append("</edXML:Subject>\n");
@@ -104,10 +105,15 @@ public class ManualEdxmlBuilder {
         xml.append("          <edXML:PageAmount>1</edXML:PageAmount>\n");
         xml.append("          <edXML:Direction>false</edXML:Direction>\n");
         xml.append("        </edXML:OtherInfo>\n");
-        xml.append("        <edXML:SteeringType>1</edXML:SteeringType>\n");
+        xml.append("        <edXML:SteeringType>0</edXML:SteeringType>\n");
         xml.append("      </edXML:MessageHeader>\n");
         xml.append("      <edXML:TraceHeaderList>\n");
+        xml.append("        <edXML:Bussiness>\n");
+        xml.append("          <edXML:BussinessDocType>0</edXML:BussinessDocType>\n");
+        xml.append("          <edXML:Paper>0</edXML:Paper>\n");
+        xml.append("        </edXML:Bussiness>\n");
         xml.append("        <edXML:TraceHeader>\n");
+        xml.append("          <edXML:OrganId>").append(escapeXml(fromCode)).append("</edXML:OrganId>\n");
         xml.append("          <edXML:Timestamp>").append(escapeXml(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()))).append("</edXML:Timestamp>\n");
         xml.append("        </edXML:TraceHeader>\n");
         xml.append("      </edXML:TraceHeaderList>\n");
