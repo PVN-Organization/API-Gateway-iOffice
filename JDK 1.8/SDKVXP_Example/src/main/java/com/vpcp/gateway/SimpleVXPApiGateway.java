@@ -362,14 +362,24 @@ public class SimpleVXPApiGateway {
                 // Aggregate: build one EDXML containing ALL files
                 if (aggregate) {
                     java.util.List<FilePart> fileParts = new java.util.ArrayList<>();
+                    String metaJson = null;
+                    String fromCode = null;
+                    String toCode = null;
+                    
+                    // Collect metaJson, fromCode, toCode from any part
                     for (MultipartData d : dataList) {
-                        fileParts.add(new FilePart(d.fileName, d.fileContent));
+                        if (d.fileContent != null) fileParts.add(new FilePart(d.fileName, d.fileContent));
+                        if (d.metaJson != null && metaJson == null) metaJson = d.metaJson;
+                        if (d.fromCode != null && fromCode == null) fromCode = d.fromCode;
+                        if (d.toCode != null && toCode == null) toCode = d.toCode;
                     }
+                    
+                    // Let DocumentPipeline derive fromCode/toCode from metaJson if not provided
                     SendDocumentResponse agg = documentPipeline.sendDocumentsAggregated(
-                        dataList.get(0).fromCode,
-                        dataList.get(0).toCode,
+                        fromCode,
+                        toCode,
                         fileParts,
-                        dataList.get(0).metaJson
+                        metaJson
                     );
 
                     java.util.Map<String, Object> response = new java.util.HashMap<>();
