@@ -279,6 +279,19 @@ public class DocumentPipeline {
             for (String c : toCodeComma.split(",")) { if (c != null && !c.trim().isEmpty()) toCodes.add(c.trim()); }
             String edxmlPath = ManualEdxmlBuilder.buildAggregatedEdxml(this.uploadDir, fromCode, toCodes, files, meta);
 
+            // Count attachments in the built EDXML for informative response
+            int attachmentCount = -1;
+            try {
+                String xml = new String(java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(edxmlPath)), "UTF-8");
+                ParsedEdxml parsed = EdxmlParser.parse(xml);
+                if (parsed != null && parsed.attachments != null) {
+                    attachmentCount = parsed.attachments.size();
+                }
+                System.out.println("[AGG] Built EDXML attachments count: " + attachmentCount);
+            } catch (Exception ignore) {
+                System.out.println("[AGG] Unable to count attachments: " + ignore.getMessage());
+            }
+
             // Header JSON (use systemId for SDK header)
             String jsonHeader = buildSendEdocHeader(systemId, "eDoc", "edoc");
 
@@ -291,7 +304,11 @@ public class DocumentPipeline {
 
             // Success
             DocumentInfo doc = new DocumentInfo(sdkResult.getDocID(), new java.io.File(edxmlPath).getName(), fromCode, System.currentTimeMillis());
-            return new SendDocumentResponse(true, "Aggregated EDXML sent successfully", doc);
+            String msg = "Aggregated EDXML sent successfully";
+            if (attachmentCount >= 0) {
+                msg += " (attachments: " + attachmentCount + ")";
+            }
+            return new SendDocumentResponse(true, msg, doc);
         } catch (Exception e) {
             return new SendDocumentResponse(false, "Aggregate error: " + e.getMessage(), null);
         }
