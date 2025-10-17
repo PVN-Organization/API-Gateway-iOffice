@@ -22,6 +22,10 @@ public class ParsedEdxml {
     public String place;
     public String promulgationDate;
     public String subject;
+    public String content;
+    public String typeName; // DocumentType/TypeName
+    public String type; // DocumentType/Type
+    public String typeDetail; // DocumentType/TypeDetail
     public PartyInfo from;
     public List<PartyInfo> to;
     public List<AttachmentInfo> attachments;

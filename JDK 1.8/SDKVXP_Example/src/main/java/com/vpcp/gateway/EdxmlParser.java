@@ -88,6 +88,16 @@ public class EdxmlParser {
             }
 
             out.subject = getText(msg, "Subject", ns);
+            out.content = getText(msg, "Content", ns);
+
+            // DocumentType
+            Element docTypeEl = msg.getChild("DocumentType", Namespace.getNamespace("edXML", ns.getURI()));
+            if (docTypeEl == null) docTypeEl = msg.getChild("DocumentType", ns);
+            if (docTypeEl != null) {
+                out.type = getText(docTypeEl, "Type", ns);
+                out.typeDetail = getText(docTypeEl, "TypeDetail", ns);
+                out.typeName = getText(docTypeEl, "TypeName", ns);
+            }
 
             // Attachments from edXMLManifest
             List<ParsedEdxml.AttachmentInfo> atts = new ArrayList<>();

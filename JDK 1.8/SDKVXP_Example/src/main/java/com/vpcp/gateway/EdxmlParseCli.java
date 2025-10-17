@@ -13,6 +13,14 @@ public class EdxmlParseCli {
             System.exit(1);
         }
         System.out.println("DocumentId: " + parsed.documentId);
+        System.out.println("CodeNumber: " + parsed.codeNumber);
+        System.out.println("CodeNotation: " + parsed.codeNotation);
+        System.out.println("PromulgationDate: " + parsed.promulgationDate);
+        System.out.println("TypeName: " + parsed.typeName);
+        System.out.println("Type: " + parsed.type);
+        System.out.println("TypeDetail: " + parsed.typeDetail);
+        System.out.println("Subject: " + parsed.subject);
+        System.out.println("Content: " + parsed.content);
         System.out.println("Attachments: " + (parsed.attachments != null ? parsed.attachments.size() : 0));
         if (parsed.attachments != null) {
             int i = 1;
