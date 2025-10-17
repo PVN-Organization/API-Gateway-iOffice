@@ -167,7 +167,7 @@ public class ManualEdxmlBuilder {
             xml.append("    <Attachment>\n");
             xml.append("      <ContentId>").append(escapeXml(ad.contentId)).append("</ContentId>\n");
             xml.append("      <AttachmentName>").append(escapeXml(ad.name)).append("</AttachmentName>\n");
-            xml.append("      <ContentType>application/zip</ContentType>\n");
+            xml.append("      <ContentType>").append(escapeXml(ad.contentType)).append("</ContentType>\n");
             xml.append("      <edXML:ContentTransferEncoded xmlns:edXML=\"http://www.mic.gov.vn/TBT/QCVN_102_2016\">");
             xml.append(ad.base64Content);
             xml.append("</edXML:ContentTransferEncoded>\n");
@@ -206,12 +206,32 @@ public class ManualEdxmlBuilder {
 
     private static String guessContentType(String filename) {
         String lower = filename.toLowerCase();
+        // Documents
         if (lower.endsWith(".pdf")) return "application/pdf";
-        if (lower.endsWith(".doc") || lower.endsWith(".docx")) return "application/msword";
-        if (lower.endsWith(".xls") || lower.endsWith(".xlsx")) return "application/vnd.ms-excel";
+        if (lower.endsWith(".doc")) return "application/msword";
+        if (lower.endsWith(".docx")) return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+        if (lower.endsWith(".xls")) return "application/vnd.ms-excel";
+        if (lower.endsWith(".xlsx")) return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+        if (lower.endsWith(".ppt")) return "application/vnd.ms-powerpoint";
+        if (lower.endsWith(".pptx")) return "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+        // Text
         if (lower.endsWith(".txt")) return "text/plain";
+        if (lower.endsWith(".xml")) return "text/xml";
+        if (lower.endsWith(".html") || lower.endsWith(".htm")) return "text/html";
+        if (lower.endsWith(".csv")) return "text/csv";
+        // Images
         if (lower.endsWith(".jpg") || lower.endsWith(".jpeg")) return "image/jpeg";
         if (lower.endsWith(".png")) return "image/png";
+        if (lower.endsWith(".gif")) return "image/gif";
+        if (lower.endsWith(".bmp")) return "image/bmp";
+        if (lower.endsWith(".tiff") || lower.endsWith(".tif")) return "image/tiff";
+        // Archives
+        if (lower.endsWith(".zip")) return "application/zip";
+        if (lower.endsWith(".rar")) return "application/x-rar-compressed";
+        if (lower.endsWith(".7z")) return "application/x-7z-compressed";
+        // Other
+        if (lower.endsWith(".json")) return "application/json";
+        if (lower.endsWith(".edxml")) return "application/xml";
         return "application/octet-stream";
     }
 
