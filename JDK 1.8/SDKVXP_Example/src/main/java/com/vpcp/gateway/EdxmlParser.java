@@ -47,6 +47,11 @@ public class EdxmlParser {
                 p.organId = getText(fromEl, "OrganId", ns);
                 p.organizationInCharge = getText(fromEl, "OrganizationInCharge", ns);
                 p.organName = getText(fromEl, "OrganName", ns);
+                p.organAdd = getText(fromEl, "OrganAdd", ns);
+                p.email = getText(fromEl, "Email", ns);
+                p.telephone = getText(fromEl, "Telephone", ns);
+                p.fax = getText(fromEl, "Fax", ns);
+                p.website = getText(fromEl, "Website", ns);
                 out.from = p;
             }
 
@@ -57,6 +62,11 @@ public class EdxmlParser {
                 p.organId = getText(toEl, "OrganId", ns);
                 p.organizationInCharge = getText(toEl, "OrganizationInCharge", ns);
                 p.organName = getText(toEl, "OrganName", ns);
+                p.organAdd = getText(toEl, "OrganAdd", ns);
+                p.email = getText(toEl, "Email", ns);
+                p.telephone = getText(toEl, "Telephone", ns);
+                p.fax = getText(toEl, "Fax", ns);
+                p.website = getText(toEl, "Website", ns);
                 tos.add(p);
             }
             if (tos.isEmpty()) {
@@ -65,6 +75,11 @@ public class EdxmlParser {
                     p.organId = getText(toEl, "OrganId", ns);
                     p.organizationInCharge = getText(toEl, "OrganizationInCharge", ns);
                     p.organName = getText(toEl, "OrganName", ns);
+                    p.organAdd = getText(toEl, "OrganAdd", ns);
+                    p.email = getText(toEl, "Email", ns);
+                    p.telephone = getText(toEl, "Telephone", ns);
+                    p.fax = getText(toEl, "Fax", ns);
+                    p.website = getText(toEl, "Website", ns);
                     tos.add(p);
                 }
             }
@@ -97,6 +112,97 @@ public class EdxmlParser {
                 out.type = getText(docTypeEl, "Type", ns);
                 out.typeDetail = getText(docTypeEl, "TypeDetail", ns);
                 out.typeName = getText(docTypeEl, "TypeName", ns);
+            }
+
+            // ResponseFor (for status EDXML)
+            Element respEl = msg.getChild("ResponseFor", Namespace.getNamespace("edXML", ns.getURI()));
+            if (respEl == null) respEl = msg.getChild("ResponseFor", ns);
+            if (respEl != null) {
+                ParsedEdxml.ResponseForInfo rf = new ParsedEdxml.ResponseForInfo();
+                rf.organId = getText(respEl, "OrganId", ns);
+                rf.code = getText(respEl, "Code", ns);
+                rf.documentId = getText(respEl, "DocumentId", ns);
+                rf.promulgationDate = getText(respEl, "PromulgationDate", ns);
+                out.responseFor = rf;
+            }
+
+            // StaffInfo
+            Element staffEl = msg.getChild("StaffInfo", Namespace.getNamespace("edXML", ns.getURI()));
+            if (staffEl == null) staffEl = msg.getChild("StaffInfo", ns);
+            if (staffEl != null) {
+                ParsedEdxml.StaffInfo si = new ParsedEdxml.StaffInfo();
+                si.department = getText(staffEl, "Department", ns);
+                si.staff = getText(staffEl, "Staff", ns);
+                si.email = getText(staffEl, "Email", ns);
+                si.mobile = getText(staffEl, "Mobile", ns);
+                out.staffInfo = si;
+            }
+
+            // StatusCode, Description, Timestamp (for status EDXML)
+            out.statusCode = getText(msg, "StatusCode", ns);
+            out.description = getText(msg, "Description", ns);
+            out.timestamp = getText(msg, "Timestamp", ns);
+
+            // SignerInfo
+            Element signerEl = msg.getChild("SignerInfo", Namespace.getNamespace("edXML", ns.getURI()));
+            if (signerEl == null) signerEl = msg.getChild("SignerInfo", ns);
+            if (signerEl != null) {
+                ParsedEdxml.SignerInfo signer = new ParsedEdxml.SignerInfo();
+                signer.fullName = getText(signerEl, "FullName", ns);
+                signer.position = getText(signerEl, "Position", ns);
+                out.signerInfo = signer;
+            }
+
+            // OtherInfo
+            Element otherEl = msg.getChild("OtherInfo", Namespace.getNamespace("edXML", ns.getURI()));
+            if (otherEl == null) otherEl = msg.getChild("OtherInfo", ns);
+            if (otherEl != null) {
+                ParsedEdxml.OtherInfo oi = new ParsedEdxml.OtherInfo();
+                oi.priority = getText(otherEl, "Priority", ns);
+                oi.sphereOfPromulgation = getText(otherEl, "SphereOfPromulgation", ns);
+                oi.typerNotation = getText(otherEl, "TyperNotation", ns);
+                oi.promulgationAmount = getText(otherEl, "PromulgationAmount", ns);
+                oi.pageAmount = getText(otherEl, "PageAmount", ns);
+                oi.direction = getText(otherEl, "Direction", ns);
+                // Appendixes
+                Element appendixesEl = otherEl.getChild("Appendixes", Namespace.getNamespace("edXML", ns.getURI()));
+                if (appendixesEl == null) appendixesEl = otherEl.getChild("Appendixes", ns);
+                if (appendixesEl != null) {
+                    List<String> appendixes = new ArrayList<>();
+                    for (Element appEl : appendixesEl.getChildren("Appendix", Namespace.getNamespace("edXML", ns.getURI()))) {
+                        String app = appEl.getTextTrim();
+                        if (app != null && !app.isEmpty()) appendixes.add(app);
+                    }
+                    if (appendixes.isEmpty()) {
+                        for (Element appEl : appendixesEl.getChildren("Appendix", ns)) {
+                            String app = appEl.getTextTrim();
+                            if (app != null && !app.isEmpty()) appendixes.add(app);
+                        }
+                    }
+                    oi.appendixes = appendixes;
+                }
+                out.otherInfo = oi;
+            }
+
+            // SteeringType
+            out.steeringType = getText(msg, "SteeringType", ns);
+
+            // ToPlaces
+            Element toPlacesEl = msg.getChild("ToPlaces", Namespace.getNamespace("edXML", ns.getURI()));
+            if (toPlacesEl == null) toPlacesEl = msg.getChild("ToPlaces", ns);
+            if (toPlacesEl != null) {
+                List<String> toPlaces = new ArrayList<>();
+                for (Element plEl : toPlacesEl.getChildren("Place", Namespace.getNamespace("edXML", ns.getURI()))) {
+                    String pl = plEl.getTextTrim();
+                    if (pl != null && !pl.isEmpty()) toPlaces.add(pl);
+                }
+                if (toPlaces.isEmpty()) {
+                    for (Element plEl : toPlacesEl.getChildren("Place", ns)) {
+                        String pl = plEl.getTextTrim();
+                        if (pl != null && !pl.isEmpty()) toPlaces.add(pl);
+                    }
+                }
+                out.toPlaces = toPlaces;
             }
 
             // Attachments from edXMLManifest
