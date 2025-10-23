@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<edXML xmlns="http://www.mic.gov.vn/TBT/QCVN_102_2016">
+  <edXML:edXMLEnvelope xmlns:edXML="http://www.mic.gov.vn/TBT/QCVN_102_2016">
+    <edXML:edXMLHeader>
+      <edXML:MessageHeader>
+        <edXML:From>
+          <edXML:OrganId>vxp.saas.03</edXML:OrganId>
+          <edXML:OrganizationInCharge>Đơn vị test vxp 3</edXML:OrganizationInCharge>
+          <edXML:OrganName>Đơn vị test vxp 3</edXML:OrganName>
+        </edXML:From>
+        <edXML:To>
+          <edXML:OrganId>vxp.saas.02</edXML:OrganId>
+          <edXML:OrganizationInCharge>vxp.saas.02</edXML:OrganizationInCharge>
+          <edXML:OrganName>vxp.saas.02</edXML:OrganName>
+        </edXML:To>
+        <edXML:DocumentId>bb5d2f68-bbce-49da-aa9a-2197cabec3bf</edXML:DocumentId>
+        <edXML:Code>
+          <edXML:CodeNumber>20251017160104</edXML:CodeNumber>
+          <edXML:CodeNotation>GW-AUTO</edXML:CodeNotation>
+        </edXML:Code>
+        <edXML:PromulgationInfo>
+          <edXML:Place>Hà Nội</edXML:Place>
+          <edXML:PromulgationDate>2025/10/17</edXML:PromulgationDate>
+        </edXML:PromulgationInfo>
+        <edXML:DocumentType>
+          <edXML:Type>1</edXML:Type>
+          <edXML:TypeDetail>0</edXML:TypeDetail>
+          <edXML:TypeName>Công văn</edXML:TypeName>
+        </edXML:DocumentType>
+        <edXML:Subject>Local Aggregate Test</edXML:Subject>
+        <edXML:Content>ManualEdxmlBuilder local test</edXML:Content>
+        <edXML:SignerInfo>
+          <edXML:FullName>Gateway Auto</edXML:FullName>
+        </edXML:SignerInfo>
+        <edXML:OtherInfo>
+          <edXML:Priority>0</edXML:Priority>
+          <edXML:SphereOfPromulgation>Lưu hành nội bộ</edXML:SphereOfPromulgation>
+          <edXML:TyperNotation>TVC</edXML:TyperNotation>
+          <edXML:PromulgationAmount>1</edXML:PromulgationAmount>
+          <edXML:PageAmount>1</edXML:PageAmount>
+          <edXML:Direction>false</edXML:Direction>
+        </edXML:OtherInfo>
+        <edXML:SteeringType>0</edXML:SteeringType>
+      </edXML:MessageHeader>
+      <edXML:TraceHeaderList>
+        <edXML:Bussiness>
+          <edXML:BussinessDocType>0</edXML:BussinessDocType>
+          <edXML:Paper>0</edXML:Paper>
+        </edXML:Bussiness>
+        <edXML:TraceHeader>
+          <edXML:OrganId>vxp.saas.03</edXML:OrganId>
+          <edXML:Timestamp>2025/10/17 16:01:04</edXML:Timestamp>
+        </edXML:TraceHeader>
+      </edXML:TraceHeaderList>
+    </edXML:edXMLHeader>
+    <edXML:edXMLBody>
+      <edXML:edXMLManifest version="1.0">
+        <edXML:Reference>
+          <edXML:ContentId>cid:6dd149f1-2f69-4983-bbf0-433d67bc6fe6</edXML:ContentId>
+          <edXML:ContentType>text/plain</edXML:ContentType>
+          <edXML:AttachmentName>localA.txt</edXML:AttachmentName>
+        </edXML:Reference>
+        <edXML:Reference>
+          <edXML:ContentId>cid:af3b41c0-fcd6-4e1b-843f-d1c7713e529d</edXML:ContentId>
+          <edXML:ContentType>text/plain</edXML:ContentType>
+          <edXML:AttachmentName>localB.txt</edXML:AttachmentName>
+        </edXML:Reference>
+        <edXML:Reference>
+          <edXML:ContentId>cid:88b9e350-74cb-4a2d-82e7-9eb5febae23c</edXML:ContentId>
+          <edXML:ContentType>text/plain</edXML:ContentType>
+          <edXML:AttachmentName>localC.txt</edXML:AttachmentName>
+        </edXML:Reference>
+      </edXML:edXMLManifest>
+    </edXML:edXMLBody>
+  </edXML:edXMLEnvelope>
+  <AttachmentEncoded>
+    <Attachment>
+      <ContentId>cid:6dd149f1-2f69-4983-bbf0-433d67bc6fe6</ContentId>
+      <AttachmentName>localA.txt</AttachmentName>
+      <ContentType>text/plain</ContentType>
+      <edXML:ContentTransferEncoded xmlns:edXML="http://www.mic.gov.vn/TBT/QCVN_102_2016">UEsDBBQACAgIACKAUVsAAAAAAAAAAAAAAAAoAAAAYjY1NmMxZDYtODkxNi00NTMyLTljZDAtOWVhYzU4Y2Q1M2QzLnR4dPPxd3b0UXB0d1dwBABQSwcI/16R3A0AAAALAAAAUEsBAhQAFAAICAgAIoBRW/9ekdwNAAAACwAAACgAAAAAAAAAAAAAAAAAAAAAAGI2NTZjMWQ2LTg5MTYtNDUzMi05Y2QwLTllYWM1OGNkNTNkMy50eHRQSwUGAAAAAAEAAQBWAAAAYwAAAAAA</edXML:ContentTransferEncoded>
+    </Attachment>
+    <Attachment>
+      <ContentId>cid:af3b41c0-fcd6-4e1b-843f-d1c7713e529d</ContentId>
+      <AttachmentName>localB.txt</AttachmentName>
+      <ContentType>text/plain</ContentType>
+      <edXML:ContentTransferEncoded xmlns:edXML="http://www.mic.gov.vn/TBT/QCVN_102_2016">UEsDBBQACAgIACKAUVsAAAAAAAAAAAAAAAAoAAAAOTlkY2M1ZWQtZWM0Ny00MjU1LTk0MWEtMDI0Yzc1MTA1NDk5LnR4dPPxd3b0UXB0d1dwAgBQSwcIRQ+YRQ0AAAALAAAAUEsBAhQAFAAICAgAIoBRW0UPmEUNAAAACwAAACgAAAAAAAAAAAAAAAAAAAAAADk5ZGNjNWVkLWVjNDctNDI1NS05NDFhLTAyNGM3NTEwNTQ5OS50eHRQSwUGAAAAAAEAAQBWAAAAYwAAAAAA</edXML:ContentTransferEncoded>
+    </Attachment>
+    <Attachment>
+      <ContentId>cid:88b9e350-74cb-4a2d-82e7-9eb5febae23c</ContentId>
+      <AttachmentName>localC.txt</AttachmentName>
+      <ContentType>text/plain</ContentType>
+      <edXML:ContentTransferEncoded xmlns:edXML="http://www.mic.gov.vn/TBT/QCVN_102_2016">UEsDBBQACAgIACKAUVsAAAAAAAAAAAAAAAAoAAAAMTYxZmY0ZDUtYjYyNy00MDg3LTgzMTAtMmI3Y2M5OGIxY2QzLnR4dPPxd3b0UXB0d1dwBgBQSwcI0z+fMg0AAAALAAAAUEsBAhQAFAAICAgAIoBRW9M/nzINAAAACwAAACgAAAAAAAAAAAAAAAAAAAAAADE2MWZmNGQ1LWI2MjctNDA4Ny04MzEwLTJiN2NjOThiMWNkMy50eHRQSwUGAAAAAAEAAQBWAAAAYwAAAAAA</edXML:ContentTransferEncoded>
+    </Attachment>
+  </AttachmentEncoded>
+</edXML>

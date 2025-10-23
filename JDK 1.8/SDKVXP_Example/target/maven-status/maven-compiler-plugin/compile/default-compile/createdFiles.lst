@@ -1,10 +1,14 @@
 com/vpcp/gateway/EdxmlBuilder.class
 com/vpcp/gateway/GetDocumentParsedResponse.class
 com/vpcp/gateway/EdxmlAggregateBuilder.class
+com/vpcp/gateway/EdxmlParseCli.class
+com/vpcp/gateway/ParsedEdxml$SignerInfo.class
 com/vpcp/gateway/AgencyPipeline.class
 com/vpcp/gateway/ReceivedDocumentsResponse.class
+com/vpcp/gateway/ManualEdxmlMetaCli.class
 com/vpcp/gateway/SendDocumentResponse.class
 com/vpcp/gateway/SimpleVXPApiGateway$MultipartData.class
+com/vpcp/gateway/ParsedEdxml$ResponseForInfo.class
 com/vpcp/gateway/DocumentPipeline.class
 com/vpcp/gateway/ParsedEdxml$PartyInfo.class
 com/vpcp/gateway/AgencyDetail.class
@@ -12,7 +16,9 @@ com/vpcp/gateway/DocumentSummary.class
 com/vpcp/example/ServiceTest.class
 com/vpcp/gateway/EdxmlParser.class
 com/vpcp/gateway/AgencyListResponse.class
+com/vpcp/gateway/ParsedEdxml$OtherInfo.class
 com/vpcp/gateway/DocumentInfo.class
+com/vpcp/gateway/ManualEdxmlBuilder$1AttachmentData.class
 com/vpcp/gateway/VXPApiGateway.class
 com/vpcp/example/ParseEdxml.class
 com/vpcp/example/App.class
@@ -20,6 +26,8 @@ com/vpcp/gateway/ParsedEdxml.class
 com/vpcp/gateway/ParsedEdxml$AttachmentInfo.class
 com/vpcp/gateway/GatewayConfig$OrganizationInfo.class
 com/vpcp/gateway/FilePart.class
+com/vpcp/gateway/ParsedEdxml$StaffInfo.class
+com/vpcp/gateway/ManualEdxmlCli.class
 com/vpcp/gateway/EdxmlMeta$PartyMeta.class
 com/vpcp/gateway/UpdateStatusResponse.class
 com/vpcp/gateway/EdxmlValidator.class
@@ -30,6 +38,7 @@ com/vpcp/gateway/VXPApiGateway$ApiResponse.class
 com/vpcp/example/SignatureGenerator.class
 com/vpcp/gateway/VXPApiGateway$HealthStatus.class
 com/vpcp/gateway/SendDocumentRequest.class
+com/vpcp/gateway/ManualEdxmlBuilder.class
 com/vpcp/example/EdXMLBuild.class
 com/vpcp/gateway/SimpleVXPApiGateway$MainHandler.class
 com/vpcp/gateway/AgencyRequest.class

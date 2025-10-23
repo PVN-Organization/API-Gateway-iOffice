@@ -260,13 +260,31 @@ public class EdxmlParser {
                                 // Decode base64
                                 byte[] decoded = Base64.getDecoder().decode(base64Content.trim());
                                 
-                                // Unzip nếu là zip
-                                String decodedContent = unzipContent(decoded);
+                                // Unzip nếu là zip -> lấy bytes sau unzip (hoặc raw nếu không zip)
+                                byte[] contentBytes = unzipContentBytes(decoded);
+                                if (contentBytes == null) contentBytes = decoded;
                                 
                                 // Match với attachment từ manifest để gán content
                                 for (ParsedEdxml.AttachmentInfo ai : atts) {
                                     if (contentId != null && contentId.equals(ai.contentId)) {
-                                        ai.decodedContent = decodedContent;
+                                        // Phân loại theo contentType để mapping đúng trường
+                                        if (ai.contentType != null) {
+                                            String ct = ai.contentType.toLowerCase();
+                                            if (ct.startsWith("text/") || ct.contains("xml") || ct.contains("json") || ct.startsWith("application/xml") || ct.startsWith("text+xml")) {
+                                                // Textual content: decode UTF-8
+                                                try {
+                                                    ai.decodedContent = new String(contentBytes, "UTF-8");
+                                                } catch (Exception ex) {
+                                                    ai.decodedContent = null;
+                                                }
+                                            } else {
+                                                // Binary content: giữ base64 cho client xử lý
+                                                ai.decodedContentBase64 = Base64.getEncoder().encodeToString(contentBytes);
+                                            }
+                                        } else {
+                                            // Không có contentType: fallback base64 để an toàn
+                                            ai.decodedContentBase64 = Base64.getEncoder().encodeToString(contentBytes);
+                                        }
                                         break;
                                     }
                                 }
@@ -285,7 +303,7 @@ public class EdxmlParser {
         }
     }
     
-    private static String unzipContent(byte[] zippedData) {
+    private static byte[] unzipContentBytes(byte[] zippedData) {
         try {
             ByteArrayInputStream bais = new ByteArrayInputStream(zippedData);
             ZipInputStream zis = new ZipInputStream(bais);
@@ -300,15 +318,11 @@ public class EdxmlParser {
                 }
                 zis.closeEntry();
                 zis.close();
-                return new String(baos.toByteArray(), "UTF-8");
+                return baos.toByteArray();
             }
         } catch (Exception e) {
-            // Nếu không phải zip, trả về raw text
-            try {
-                return new String(zippedData, "UTF-8");
-            } catch (Exception ex) {
-                return null;
-            }
+            // Nếu không phải zip, trả về raw bytes
+            return zippedData;
         }
         return null;
     }

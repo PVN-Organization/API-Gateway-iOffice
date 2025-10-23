@@ -1,0 +1,22 @@
+{
+  "from": {
+    "organId": "vxp.saas.03",
+    "organizationInCharge": "Đơn vị test vxp 3",
+    "organName": "Đơn vị test vxp 3",
+    "organAdd": "Số 1, Hà Nội",
+    "email": "contact-vxp3@example.vn",
+    "telephone": "+84 24 1234 5678",
+    "fax": "+84 24 8765 4321",
+    "website": "https://vxp3.example.vn"
+  },
+  "to": [{
+    "organId": "vxp.saas.03",
+    "organizationInCharge": "Đơn vị test vxp 3",
+    "organName": "Đơn vị test vxp 3"
+  }],
+  "subject": "Tiêu đề thử",
+  "content": "Nội dung mô tả",
+  "codeNotation": "GW-AUTO",
+  "place": "Hà Nội",
+  "signerFullName": "Nguyễn Văn A"
+}

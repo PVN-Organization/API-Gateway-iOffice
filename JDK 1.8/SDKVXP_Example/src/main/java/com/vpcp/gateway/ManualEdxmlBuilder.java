@@ -27,13 +27,32 @@ public class ManualEdxmlBuilder {
 
         // Generate unique document ID
         String docId = UUID.randomUUID().toString();
-        String codeNumber = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-        String codeNotation = meta != null && meta.codeNotation != null ? meta.codeNotation : "GW-AUTO";
-        String place = meta != null && meta.place != null ? meta.place : "Hà Nội";
-        String promulgationDate = new SimpleDateFormat("yyyy/MM/dd").format(new Date());
-        String subject = meta != null && meta.subject != null ? meta.subject : codeNumber;
-        String content = meta != null && meta.content != null ? meta.content : "File uploaded via Gateway";
-        String signerName = meta != null && meta.signerFullName != null ? meta.signerFullName : "Gateway Auto";
+        String codeNumber = (meta != null && meta.codeNumber != null) ? meta.codeNumber : new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+        String codeNotation = (meta != null && meta.codeNotation != null) ? meta.codeNotation : "GW-AUTO";
+        String place = (meta != null && meta.place != null) ? meta.place : "Hà Nội";
+        String promulgationDate = (meta != null && meta.promulgationDate != null) ? meta.promulgationDate : new SimpleDateFormat("yyyy/MM/dd").format(new Date());
+        String subject = (meta != null && meta.subject != null) ? meta.subject : codeNumber;
+        String content = (meta != null && meta.content != null) ? meta.content : "File uploaded via Gateway";
+        
+        // DocumentType
+        String typeName = (meta != null && meta.typeName != null) ? meta.typeName : "Công văn";
+        String type = (meta != null && meta.type != null) ? meta.type : "1";
+        String typeDetail = (meta != null && meta.typeDetail != null) ? meta.typeDetail : "0";
+        
+        // SignerInfo
+        String signerName = (meta != null && meta.signerFullName != null) ? meta.signerFullName : "Gateway Auto";
+        String signerPosition = (meta != null && meta.signerPosition != null) ? meta.signerPosition : "";
+        
+        // OtherInfo
+        String priority = (meta != null && meta.priority != null) ? meta.priority : "0";
+        String sphereOfPromulgation = (meta != null && meta.sphereOfPromulgation != null) ? meta.sphereOfPromulgation : "Lưu hành nội bộ";
+        String typerNotation = (meta != null && meta.typerNotation != null) ? meta.typerNotation : "TVC";
+        String promulgationAmount = (meta != null && meta.promulgationAmount != null) ? meta.promulgationAmount : "1";
+        String pageAmount = (meta != null && meta.pageAmount != null) ? meta.pageAmount : "1";
+        String direction = (meta != null && meta.direction != null) ? meta.direction : "false";
+        
+        // SteeringType & ToPlaces
+        String steeringType = (meta != null && meta.steeringType != null) ? meta.steeringType : "0";
 
         // From info
         String fromOrganName = meta != null && meta.from != null && meta.from.organName != null ? meta.from.organName : fromCode;
@@ -88,24 +107,43 @@ public class ManualEdxmlBuilder {
         xml.append("          <edXML:PromulgationDate>").append(escapeXml(promulgationDate)).append("</edXML:PromulgationDate>\n");
         xml.append("        </edXML:PromulgationInfo>\n");
         xml.append("        <edXML:DocumentType>\n");
-        xml.append("          <edXML:Type>1</edXML:Type>\n");
-        xml.append("          <edXML:TypeDetail>0</edXML:TypeDetail>\n");
-        xml.append("          <edXML:TypeName>Công văn</edXML:TypeName>\n");
+        xml.append("          <edXML:Type>").append(escapeXml(type)).append("</edXML:Type>\n");
+        xml.append("          <edXML:TypeDetail>").append(escapeXml(typeDetail)).append("</edXML:TypeDetail>\n");
+        xml.append("          <edXML:TypeName>").append(escapeXml(typeName)).append("</edXML:TypeName>\n");
         xml.append("        </edXML:DocumentType>\n");
         xml.append("        <edXML:Subject>").append(escapeXml(subject)).append("</edXML:Subject>\n");
         xml.append("        <edXML:Content>").append(escapeXml(content)).append("</edXML:Content>\n");
         xml.append("        <edXML:SignerInfo>\n");
         xml.append("          <edXML:FullName>").append(escapeXml(signerName)).append("</edXML:FullName>\n");
+        if (signerPosition != null && !signerPosition.trim().isEmpty()) {
+            xml.append("          <edXML:Position>").append(escapeXml(signerPosition)).append("</edXML:Position>\n");
+        }
         xml.append("        </edXML:SignerInfo>\n");
         xml.append("        <edXML:OtherInfo>\n");
-        xml.append("          <edXML:Priority>0</edXML:Priority>\n");
-        xml.append("          <edXML:SphereOfPromulgation>Lưu hành nội bộ</edXML:SphereOfPromulgation>\n");
-        xml.append("          <edXML:TyperNotation>TVC</edXML:TyperNotation>\n");
-        xml.append("          <edXML:PromulgationAmount>1</edXML:PromulgationAmount>\n");
-        xml.append("          <edXML:PageAmount>1</edXML:PageAmount>\n");
-        xml.append("          <edXML:Direction>false</edXML:Direction>\n");
+        xml.append("          <edXML:Priority>").append(escapeXml(priority)).append("</edXML:Priority>\n");
+        xml.append("          <edXML:SphereOfPromulgation>").append(escapeXml(sphereOfPromulgation)).append("</edXML:SphereOfPromulgation>\n");
+        xml.append("          <edXML:TyperNotation>").append(escapeXml(typerNotation)).append("</edXML:TyperNotation>\n");
+        xml.append("          <edXML:PromulgationAmount>").append(escapeXml(promulgationAmount)).append("</edXML:PromulgationAmount>\n");
+        xml.append("          <edXML:PageAmount>").append(escapeXml(pageAmount)).append("</edXML:PageAmount>\n");
+        xml.append("          <edXML:Direction>").append(escapeXml(direction)).append("</edXML:Direction>\n");
+        // Append Appendixes if provided
+        if (meta != null && meta.appendixes != null && !meta.appendixes.isEmpty()) {
+            xml.append("          <edXML:Appendixes>\n");
+            for (String appendix : meta.appendixes) {
+                xml.append("            <edXML:Appendix>").append(escapeXml(appendix)).append("</edXML:Appendix>\n");
+            }
+            xml.append("          </edXML:Appendixes>\n");
+        }
         xml.append("        </edXML:OtherInfo>\n");
-        xml.append("        <edXML:SteeringType>0</edXML:SteeringType>\n");
+        xml.append("        <edXML:SteeringType>").append(escapeXml(steeringType)).append("</edXML:SteeringType>\n");
+        // ToPlaces if provided
+        if (meta != null && meta.toPlaces != null && !meta.toPlaces.isEmpty()) {
+            xml.append("        <edXML:ToPlaces>\n");
+            for (String toPlace : meta.toPlaces) {
+                xml.append("          <edXML:Place>").append(escapeXml(toPlace)).append("</edXML:Place>\n");
+            }
+            xml.append("        </edXML:ToPlaces>\n");
+        }
         xml.append("      </edXML:MessageHeader>\n");
         xml.append("      <edXML:TraceHeaderList>\n");
         xml.append("        <edXML:Bussiness>\n");

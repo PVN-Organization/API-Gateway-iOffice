@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<edXML xmlns="http://www.mic.gov.vn/TBT/QCVN_102_2016">
+  <edXML:edXMLEnvelope xmlns:edXML="http://www.mic.gov.vn/TBT/QCVN_102_2016">
+    <edXML:edXMLHeader>
+      <edXML:MessageHeader>
+        <edXML:From>
+          <edXML:OrganId>vxp.saas.03</edXML:OrganId>
+          <edXML:OrganizationInCharge>Đơn vị test vxp 3</edXML:OrganizationInCharge>
+          <edXML:OrganName>Đơn vị test vxp 3</edXML:OrganName>
+        </edXML:From>
+        <edXML:To>
+          <edXML:OrganId>vxp.saas.03</edXML:OrganId>
+          <edXML:OrganizationInCharge>Đơn vị test vxp 3</edXML:OrganizationInCharge>
+          <edXML:OrganName>Đơn vị test vxp 3</edXML:OrganName>
+        </edXML:To>
+        <edXML:DocumentId>b6e1f29d-cdc9-4fa7-8391-442e8566f14e</edXML:DocumentId>
+        <edXML:Code>
+          <edXML:CodeNumber>20251016112435</edXML:CodeNumber>
+          <edXML:CodeNotation>GW-AUTO</edXML:CodeNotation>
+        </edXML:Code>
+        <edXML:PromulgationInfo>
+          <edXML:Place>Hà Nội</edXML:Place>
+          <edXML:PromulgationDate>2025/10/16</edXML:PromulgationDate>
+        </edXML:PromulgationInfo>
+        <edXML:DocumentType>
+          <edXML:Type>1</edXML:Type>
+          <edXML:TypeName>Công văn</edXML:TypeName>
+        </edXML:DocumentType>
+        <edXML:Subject>Tiêu đề thử</edXML:Subject>
+        <edXML:Content>Nội dung mô tả</edXML:Content>
+        <edXML:SignerInfo>
+          <edXML:FullName>Nguyễn Văn A</edXML:FullName>
+        </edXML:SignerInfo>
+        <edXML:OtherInfo>
+          <edXML:Priority>0</edXML:Priority>
+          <edXML:SphereOfPromulgation>Lưu hành nội bộ</edXML:SphereOfPromulgation>
+          <edXML:TyperNotation>TVC</edXML:TyperNotation>
+          <edXML:PromulgationAmount>1</edXML:PromulgationAmount>
+          <edXML:PageAmount>1</edXML:PageAmount>
+          <edXML:Direction>false</edXML:Direction>
+        </edXML:OtherInfo>
+        <edXML:SteeringType>1</edXML:SteeringType>
+      </edXML:MessageHeader>
+      <edXML:TraceHeaderList>
+        <edXML:TraceHeader>
+          <edXML:Timestamp>2025/10/16 11:24:35</edXML:Timestamp>
+        </edXML:TraceHeader>
+      </edXML:TraceHeaderList>
+    </edXML:edXMLHeader>
+    <edXML:edXMLBody>
+      <edXML:edXMLManifest version="1.0">
+        <edXML:Reference>
+          <edXML:ContentId>cid:d689931d-546d-423a-9ff5-6f0eca746fa0</edXML:ContentId>
+          <edXML:ContentType>text/plain</edXML:ContentType>
+          <edXML:AttachmentName>metaA.txt</edXML:AttachmentName>
+        </edXML:Reference>
+        <edXML:Reference>
+          <edXML:ContentId>cid:bc58eedd-2f04-4ccc-b58a-3534b142f45c</edXML:ContentId>
+          <edXML:ContentType>text/plain</edXML:ContentType>
+          <edXML:AttachmentName>metaB.txt</edXML:AttachmentName>
+        </edXML:Reference>
+      </edXML:edXMLManifest>
+    </edXML:edXMLBody>
+  </edXML:edXMLEnvelope>
+  <AttachmentEncoded>
+    <Attachment>
+      <ContentId>cid:d689931d-546d-423a-9ff5-6f0eca746fa0</ContentId>
+      <AttachmentName>metaA.txt</AttachmentName>
+      <ContentType>application/zip</ContentType>
+      <edXML:ContentTransferEncoded xmlns:edXML="http://www.mic.gov.vn/TBT/QCVN_102_2016">UEsDBBQACAgIABFbUFsAAAAAAAAAAAAAAAAoAAAAZTI4NGUzNjItNjg4Mi00NTFjLWI0OTItMjBkNjE1NzhmMmE1LnR4dPN1DXFUcAQAUEsHCI5FfzMIAAAABgAAAFBLAQIUABQACAgIABFbUFuORX8zCAAAAAYAAAAoAAAAAAAAAAAAAAAAAAAAAABlMjg0ZTM2Mi02ODgyLTQ1MWMtYjQ5Mi0yMGQ2MTU3OGYyYTUudHh0UEsFBgAAAAABAAEAVgAAAF4AAAAAAA==</edXML:ContentTransferEncoded>
+    </Attachment>
+    <Attachment>
+      <ContentId>cid:bc58eedd-2f04-4ccc-b58a-3534b142f45c</ContentId>
+      <AttachmentName>metaB.txt</AttachmentName>
+      <ContentType>application/zip</ContentType>
+      <edXML:ContentTransferEncoded xmlns:edXML="http://www.mic.gov.vn/TBT/QCVN_102_2016">UEsDBBQACAgIABFbUFsAAAAAAAAAAAAAAAAoAAAAMDM0N2M3YjYtYTA0OC00ZTQ0LWE3OWQtNjVlMDBhNjRhYTkyLnR4dPN1DXFUcAIAUEsHCDQUdqoIAAAABgAAAFBLAQIUABQACAgIABFbUFs0FHaqCAAAAAYAAAAoAAAAAAAAAAAAAAAAAAAAAAAwMzQ3YzdiNi1hMDQ4LTRlNDQtYTc5ZC02NWUwMGE2NGFhOTIudHh0UEsFBgAAAAABAAEAVgAAAF4AAAAAAA==</edXML:ContentTransferEncoded>
+    </Attachment>
+  </AttachmentEncoded>
+</edXML>

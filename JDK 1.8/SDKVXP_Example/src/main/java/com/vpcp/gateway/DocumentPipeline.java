@@ -324,8 +324,8 @@ public class DocumentPipeline {
         // Step 1: Build request with optional filters (and recommended params)
         System.out.println("  Step 1: Building request...");
         StringBuilder jsonBuilder = new StringBuilder("{\"servicetype\":\"eDoc\",\"messagetype\":\"edoc\"");
-        // Always include 'from' = systemId (receiver org)
-        jsonBuilder.append(",\"from\":\"").append(this.systemId).append("\"");
+        // Use 'to' = systemId (receiver org)
+        jsonBuilder.append(",\"to\":\"").append(this.systemId).append("\"");
         
         if (fromDate != null) {
             jsonBuilder.append(",\"fromDate\":\"").append(fromDate).append("\"");

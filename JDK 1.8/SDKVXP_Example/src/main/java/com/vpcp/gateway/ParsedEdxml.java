@@ -18,7 +18,8 @@ public class ParsedEdxml {
         public String attachmentName;
         public String contentType;
         public String contentId;
-        public String decodedContent; // Nội dung đã decode từ base64 + unzip
+        public String decodedContent; // Nội dung text đã decode (UTF-8) nếu là text/*, xml, json
+        public String decodedContentBase64; // Nội dung nhị phân (PDF/Ảnh/Office) ở dạng base64 sau khi unzip (nếu có)
     }
 
     public static class ResponseForInfo {

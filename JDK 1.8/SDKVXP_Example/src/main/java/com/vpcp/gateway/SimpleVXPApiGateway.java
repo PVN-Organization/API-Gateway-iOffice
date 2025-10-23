@@ -35,6 +35,7 @@ public class SimpleVXPApiGateway {
     private static DocumentPipeline documentPipeline;
     
     public static void main(String[] args) throws IOException {
+        System.out.println("🔍 Debug: Starting VXP Gateway...");
         int port = getPort(args);
         String systemId = getSystemId(args);
         String secret = getSecret(args);
@@ -70,8 +71,8 @@ public class SimpleVXPApiGateway {
         System.out.println("  📄 Documents:");
         System.out.println("    GET  /api/documents/received        - Get received documents");
         System.out.println("    GET  /api/documents/{id}            - Get document detail");
-        System.out.println("    POST /api/documents/send            - Send single document");
-        System.out.println("    POST /api/documents/send/batch      - Send multiple documents ⭐");
+        System.out.println("    POST /api/documents/send            - Send single document (param: files[])");
+        System.out.println("    POST /api/documents/send/batch      - Send multiple documents (param: files[]) ⭐");
         System.out.println("    PUT  /api/documents/status          - Update document status");
         System.out.println("=====================================");
         System.out.println("Press Ctrl+C to stop");
@@ -125,9 +126,17 @@ public class SimpleVXPApiGateway {
         public void handle(HttpExchange exchange) throws IOException {
             String method = exchange.getRequestMethod();
             String path = exchange.getRequestURI().getPath();
+            System.out.println("🔍 Debug: MainHandler - " + method + " " + path);
             String query = exchange.getRequestURI().getQuery();
             
             System.out.println("📥 " + method + " " + path + (query != null ? "?" + query : ""));
+            
+            // Debug path matching
+            if (path.startsWith("/api/documents/") && "GET".equals(method)) {
+                System.out.println("🔍 Document path detected: " + path);
+                System.out.println("🔍 Contains /attachment/: " + path.contains("/attachment/"));
+                System.out.println("🔍 Ends with /binary: " + path.endsWith("/binary"));
+            }
             
             try {
                 // Health
@@ -151,6 +160,7 @@ public class SimpleVXPApiGateway {
                 }
                 // Documents - Send Single
                 else if (path.equals("/api/documents/send") && "POST".equals(method)) {
+                    System.out.println("🔍 Debug: Routing to handleSendDocument");
                     handleSendDocument(exchange);
                 }
                 // Documents - Send Multiple (Batch)
@@ -263,6 +273,72 @@ public class SimpleVXPApiGateway {
             sendResponse(exchange, 200, response);
         }
         
+        // Get Attachment Binary Content from Parsed Document
+        private void handleGetAttachmentBinaryFromParsed(HttpExchange exchange, String docId, String contentId) throws IOException {
+            try {
+                // Get parsed document to find attachment
+                GetDocumentParsedResponse result = documentPipeline.getDocumentDetailParsed(docId);
+                if (!result.isSuccess()) {
+                    sendError(exchange, 404, "Document not found");
+                    return;
+                }
+                
+                ParsedEdxml parsed = result.getParsed();
+                if (parsed == null || parsed.attachments == null) {
+                    sendError(exchange, 404, "No attachments found");
+                    return;
+                }
+                
+                // Find attachment by contentId
+                ParsedEdxml.AttachmentInfo targetAttachment = null;
+                for (ParsedEdxml.AttachmentInfo att : parsed.attachments) {
+                    if (contentId.equals(att.contentId)) {
+                        targetAttachment = att;
+                        break;
+                    }
+                }
+                
+                if (targetAttachment == null) {
+                    sendError(exchange, 404, "Attachment not found");
+                    return;
+                }
+                
+                // Determine content type and return appropriate response
+                String contentType = targetAttachment.contentType;
+                if (contentType == null) {
+                    contentType = "application/octet-stream";
+                }
+                
+                // Set response headers
+                exchange.getResponseHeaders().set("Content-Type", contentType);
+                exchange.getResponseHeaders().set("Content-Disposition", "attachment; filename=\"" + targetAttachment.attachmentName + "\"");
+                
+                // Return binary content
+                if (targetAttachment.decodedContentBase64 != null) {
+                    // Binary content (PDF, images, etc.)
+                    byte[] binaryData = java.util.Base64.getDecoder().decode(targetAttachment.decodedContentBase64);
+                    exchange.sendResponseHeaders(200, binaryData.length);
+                    try (OutputStream os = exchange.getResponseBody()) {
+                        os.write(binaryData);
+                    }
+                } else if (targetAttachment.decodedContent != null) {
+                    // Text content
+                    byte[] textData = targetAttachment.decodedContent.getBytes(StandardCharsets.UTF_8);
+                    exchange.sendResponseHeaders(200, textData.length);
+                    try (OutputStream os = exchange.getResponseBody()) {
+                        os.write(textData);
+                    }
+                } else {
+                    sendError(exchange, 404, "No content available");
+                }
+                
+            } catch (Exception e) {
+                System.err.println("❌ Error getting attachment binary from parsed: " + e.getMessage());
+                e.printStackTrace();
+                sendError(exchange, 500, "Internal server error: " + e.getMessage());
+            }
+        }
+        
         // Get Document Detail
         private void handleGetDocumentDetail(HttpExchange exchange, String docId) throws IOException {
             boolean parsed = false;
@@ -271,6 +347,35 @@ public class SimpleVXPApiGateway {
                 docId = docId.substring(0, docId.length() - "/parsed".length());
             }
             if (parsed) {
+                // Check for binary content request
+                String query = exchange.getRequestURI().getQuery();
+                System.out.println("🔍 Query parameters: " + query);
+                boolean binaryRequest = query != null && query.contains("binary=true");
+                String contentId = null;
+                
+                System.out.println("🔍 Binary request: " + binaryRequest);
+                
+                if (binaryRequest && query.contains("contentId=")) {
+                    // Extract contentId from query parameter
+                    String[] params = query.split("&");
+                    for (String param : params) {
+                        if (param.startsWith("contentId=")) {
+                            contentId = param.substring("contentId=".length());
+                            break;
+                        }
+                    }
+                }
+                
+                System.out.println("🔍 ContentId: " + contentId);
+                
+                if (binaryRequest && contentId != null) {
+                    System.out.println("🔍 Calling binary handler for contentId: " + contentId);
+                    // Return binary content for specific attachment
+                    handleGetAttachmentBinaryFromParsed(exchange, docId, contentId);
+                    return;
+                }
+                
+                // Normal parsed response
                 GetDocumentParsedResponse result = documentPipeline.getDocumentDetailParsed(docId);
                 Map<String, Object> response = new HashMap<>();
                 response.put("success", result.isSuccess());
@@ -301,9 +406,12 @@ public class SimpleVXPApiGateway {
         
         // Send Document
         private void handleSendDocument(HttpExchange exchange) throws IOException {
+            System.out.println("🔍 Debug: handleSendDocument called");
             String contentType = exchange.getRequestHeaders().getFirst("Content-Type");
+            System.out.println("🔍 Debug: Content-Type: " + contentType);
             
             if (contentType != null && contentType.startsWith("multipart/form-data")) {
+                System.out.println("🔍 Debug: Calling handleMultipartSend");
                 handleMultipartSend(exchange, contentType);
             } else {
                 sendError(exchange, 400, "Content-Type must be multipart/form-data");
@@ -412,15 +520,15 @@ public class SimpleVXPApiGateway {
                             continue;
                         }
                         
-                        // Create request
+                        // Create request - chỉ sử dụng meta JSON duy nhất
                         SendDocumentRequest request = new SendDocumentRequest(
-                            data.fromCode,
-                            data.toCode,
+                            null,
+                            null,
                             data.fileName != null ? data.fileName : "document_" + i + ".edxml",
                             data.fileContent
                         );
-                        request.setServiceType(data.serviceType != null ? data.serviceType : "eDoc");
-                        request.setMessageType(data.messageType != null ? data.messageType : "edoc");
+                        
+                        // Chỉ sử dụng meta JSON, không cần các field riêng lẻ
                         if (data.metaJson != null) request.setMetaJson(data.metaJson);
                         request.setForceWrap(true); // Force rebuild with meta
                         
@@ -465,9 +573,11 @@ public class SimpleVXPApiGateway {
         }
         
         private void handleMultipartSend(HttpExchange exchange, String contentType) throws IOException {
+            System.out.println("🔍 Debug: handleMultipartSend called with contentType: " + contentType);
             try {
                 // Parse boundary
                 String boundary = extractBoundary(contentType);
+                System.out.println("🔍 Debug: Boundary: " + boundary);
                 if (boundary == null) {
                     sendError(exchange, 400, "Invalid multipart boundary");
                     return;
@@ -475,23 +585,32 @@ public class SimpleVXPApiGateway {
                 
                 // Read multipart data
                 byte[] body = readRequestBodyBytes(exchange);
+                System.out.println("🔍 Debug: Body size: " + (body != null ? body.length : 0));
                 MultipartData data = parseMultipart(body, boundary);
+                
+                if (data == null) {
+                    sendError(exchange, 400, "Failed to parse multipart data: null");
+                    return;
+                }
                 
                 if (data.fileContent == null) {
                     sendError(exchange, 400, "file is required");
                     return;
                 }
                 
-                // Create request (gateway tối giản: không dùng fromCode/toCode, lấy từ meta)
+                // Create request - chỉ sử dụng meta JSON duy nhất
                 SendDocumentRequest request = new SendDocumentRequest(
                     null,
                     null,
                     data.fileName != null ? data.fileName : "document.edxml",
                     data.fileContent
                 );
-                request.setServiceType(data.serviceType != null ? data.serviceType : "eDoc");
-                request.setMessageType(data.messageType != null ? data.messageType : "edoc");
-                if (data.metaJson != null) request.setMetaJson(data.metaJson);
+                
+                // Chỉ sử dụng meta JSON, không cần các field riêng lẻ
+                if (data.metaJson != null) {
+                    request.setMetaJson(data.metaJson);
+                }
+                
                 // Gateway tự động: luôn rebuild EDXML và áp dụng meta khi có
                 request.setForceWrap(true);
                 
@@ -518,27 +637,28 @@ public class SimpleVXPApiGateway {
             String bodyStr = new String(body, StandardCharsets.UTF_8);
             String[] parts = bodyStr.split("--" + boundary);
             
+            System.out.println("🔍 Debug: Parsing multipart with boundary: " + boundary);
+            System.out.println("🔍 Debug: Found " + parts.length + " parts");
+            
             for (String part : parts) {
                 if (part.contains("Content-Disposition")) {
                     // Extract field name
                     String name = extractFieldName(part);
+                    System.out.println("🔍 Debug: Found field: " + name);
                     
-                    if ("fromCode".equals(name) || "from".equals(name)) {
-                        data.fromCode = extractFieldValue(part);
-                    } else if ("toCode".equals(name) || "to".equals(name)) {
-                        data.toCode = extractFieldValue(part);
-                    } else if ("serviceType".equals(name) || "servicetype".equals(name)) {
-                        data.serviceType = extractFieldValue(part);
-                    } else if ("messageType".equals(name) || "messagetype".equals(name)) {
-                        data.messageType = extractFieldValue(part);
-                    } else if ("meta".equals(name) || "metadata".equals(name)) {
+                    if ("meta".equals(name) || "metadata".equals(name) || "metaJson".equals(name)) {
                         data.metaJson = extractFieldValue(part);
-                    } else if ("file".equals(name)) {
+                        System.out.println("🔍 Debug: Meta JSON: " + (data.metaJson != null ? data.metaJson.substring(0, Math.min(100, data.metaJson.length())) + "..." : "null"));
+                    } else if ("file".equalsIgnoreCase(name) || "files".equalsIgnoreCase(name) || "files[]".equalsIgnoreCase(name)) {
+                        // Accept "file", "files", or "files[]" for single document send
                         data.fileName = extractFileName(part);
                         data.fileContent = extractFileContent(body, part);
+                        System.out.println("🔍 Debug: File: " + data.fileName + ", size: " + (data.fileContent != null ? data.fileContent.length : 0));
                     }
                 }
             }
+            
+            // Không cần tích hợp gì thêm - chỉ sử dụng meta JSON duy nhất
             
             return data;
         }
@@ -549,11 +669,7 @@ public class SimpleVXPApiGateway {
             String bodyStr = new String(body, StandardCharsets.UTF_8);
             String[] parts = bodyStr.split("--" + boundary);
             
-            // Extract common fields first
-            String fromCode = null;
-            String toCode = null;
-            String serviceType = null;
-            String messageType = null;
+            // Extract common fields - chỉ cần meta JSON
             String metaJson = null;
             String aggregateFlag = null;
             
@@ -562,15 +678,7 @@ public class SimpleVXPApiGateway {
                 if (part.contains("Content-Disposition")) {
                     String name = extractFieldName(part);
                     
-                    if ("fromCode".equals(name) || "from".equals(name)) {
-                        fromCode = extractFieldValue(part);
-                    } else if ("toCode".equals(name) || "to".equals(name)) {
-                        toCode = extractFieldValue(part);
-                    } else if ("serviceType".equals(name) || "servicetype".equals(name)) {
-                        serviceType = extractFieldValue(part);
-                    } else if ("messageType".equals(name) || "messagetype".equals(name)) {
-                        messageType = extractFieldValue(part);
-                    } else if ("meta".equals(name) || "metadata".equals(name) || "metaJson".equals(name)) {
+                    if ("meta".equals(name) || "metadata".equals(name) || "metaJson".equals(name)) {
                         metaJson = extractFieldValue(part);
                     } else if ("aggregate".equals(name)) {
                         aggregateFlag = extractFieldValue(part);
@@ -578,17 +686,16 @@ public class SimpleVXPApiGateway {
                 }
             }
             
-            // Second pass: extract all files
+            // Second pass: extract all files (only accept "files[]" or "files" parameter)
             for (String part : parts) {
                 if (part.contains("Content-Disposition") && part.contains("filename")) {
                     String name = extractFieldName(part);
                     
-                    if ("file".equals(name) || "files".equals(name) || name != null && name.startsWith("file")) {
+                    // Only accept "files[]" or "files" (case-insensitive)
+                    if (name != null && (name.equalsIgnoreCase("files") || name.equalsIgnoreCase("files[]"))) {
                         MultipartData data = new MultipartData();
-                        data.fromCode = fromCode;
-                        data.toCode = toCode;
-                        data.serviceType = serviceType;
-                        data.messageType = messageType;
+                        
+                        // Chỉ sử dụng meta JSON duy nhất
                         data.metaJson = metaJson;
                         data.aggregate = aggregateFlag;
                         data.fileName = extractFileName(part);
@@ -654,18 +761,81 @@ public class SimpleVXPApiGateway {
         }
         
         private byte[] extractFileContent(byte[] fullBody, String part) {
-            // Simplified - extract binary content from multipart
-            // In production, use proper multipart library
+            // Extract binary content from multipart - MUST preserve binary data!
+            // Find the boundary markers in fullBody directly (as bytes)
             try {
-                int contentStart = part.indexOf("\r\n\r\n");
-                if (contentStart != -1) {
-                    String value = part.substring(contentStart + 4);
-                    return value.trim().getBytes(StandardCharsets.UTF_8);
+                // Get part header to find content offset
+                int headerEnd = part.indexOf("\r\n\r\n");
+                if (headerEnd == -1) {
+                    System.err.println("Error: No header/content separator found in part");
+                    return new byte[0];
                 }
+                
+                // Find this part's header in the full body bytes
+                String partHeader = part.substring(0, headerEnd);
+                byte[] headerBytes = partHeader.getBytes(StandardCharsets.UTF_8);
+                
+                // Search for header in fullBody
+                int headerPos = indexOf(fullBody, headerBytes);
+                if (headerPos == -1) {
+                    System.err.println("Error: Could not find part header in body");
+                    return new byte[0];
+                }
+                
+                // Content starts after "\r\n\r\n"
+                int contentStart = headerPos + headerBytes.length + 4;
+                
+                // Find end of content (next boundary or end)
+                // Look for "\r\n--" which marks the next boundary
+                byte[] boundaryMarker = "\r\n--".getBytes(StandardCharsets.UTF_8);
+                int contentEnd = indexOf(fullBody, boundaryMarker, contentStart);
+                
+                if (contentEnd == -1) {
+                    // No next boundary found, take until end
+                    contentEnd = fullBody.length;
+                }
+                
+                // Extract binary content
+                int contentLength = contentEnd - contentStart;
+                if (contentLength <= 0) {
+                    return new byte[0];
+                }
+                
+                byte[] content = new byte[contentLength];
+                System.arraycopy(fullBody, contentStart, content, 0, contentLength);
+                
+                return content;
+                
             } catch (Exception e) {
                 System.err.println("Error extracting file content: " + e.getMessage());
+                e.printStackTrace();
             }
             return new byte[0];
+        }
+        
+        // Helper: find byte pattern in byte array
+        private int indexOf(byte[] source, byte[] pattern) {
+            return indexOf(source, pattern, 0);
+        }
+        
+        private int indexOf(byte[] source, byte[] pattern, int fromIndex) {
+            if (pattern.length == 0 || fromIndex >= source.length) {
+                return -1;
+            }
+            
+            for (int i = fromIndex; i <= source.length - pattern.length; i++) {
+                boolean found = true;
+                for (int j = 0; j < pattern.length; j++) {
+                    if (source[i + j] != pattern[j]) {
+                        found = false;
+                        break;
+                    }
+                }
+                if (found) {
+                    return i;
+                }
+            }
+            return -1;
         }
     }
     
@@ -732,5 +902,6 @@ public class SimpleVXPApiGateway {
         buffer.flush();
         return buffer.toByteArray();
     }
+    
 }
 

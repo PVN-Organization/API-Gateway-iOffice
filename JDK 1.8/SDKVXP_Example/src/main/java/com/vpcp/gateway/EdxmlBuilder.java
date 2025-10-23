@@ -1,11 +1,14 @@
 package com.vpcp.gateway;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.Date;
 import java.util.UUID;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * EdXML Builder
@@ -29,14 +32,14 @@ public class EdxmlBuilder {
     public static String wrapFileToEdxml(String originalFile, String fromCode, String toCode, EdxmlMeta meta) throws IOException {
         File file = new File(originalFile);
         
-        // Read file content and encode base64
-        byte[] fileBytes = java.nio.file.Files.readAllBytes(file.toPath());
-        String base64Content = Base64.getEncoder().encodeToString(fileBytes);
-        
         // Get file info
         String fileName = file.getName();
         String fileExtension = getFileExtension(fileName);
         long fileSize = file.length();
+        
+        // Read file content and zip + base64 encode (đúng format mẫu UEsDB...)
+        byte[] fileBytes = java.nio.file.Files.readAllBytes(file.toPath());
+        String base64Content = zipAndEncode(fileBytes, fileName);
         
         // Build EDXML
         String edxml = buildEdxml(
@@ -158,40 +161,59 @@ public class EdxmlBuilder {
         // Document Info
         edxml.append("        <edXML:DocumentId>").append(docCode).append("</edXML:DocumentId>\n");
         edxml.append("        <edXML:Code>\n");
-        edxml.append("          <edXML:CodeNumber>").append(new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())).append("</edXML:CodeNumber>\n");
+        edxml.append("          <edXML:CodeNumber>").append(meta != null && meta.codeNumber != null ? meta.codeNumber : new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())).append("</edXML:CodeNumber>\n");
         edxml.append("          <edXML:CodeNotation>").append(meta != null && meta.codeNotation != null ? meta.codeNotation : "GW-AUTO").append("</edXML:CodeNotation>\n");
         edxml.append("        </edXML:Code>\n");
         edxml.append("        <edXML:PromulgationInfo>\n");
         edxml.append("          <edXML:Place>").append(meta != null && meta.place != null ? meta.place : "Hà Nội").append("</edXML:Place>\n");
-        edxml.append("          <edXML:PromulgationDate>").append(timestamp).append("</edXML:PromulgationDate>\n");
+        edxml.append("          <edXML:PromulgationDate>").append(meta != null && meta.promulgationDate != null ? meta.promulgationDate : timestamp).append("</edXML:PromulgationDate>\n");
         edxml.append("        </edXML:PromulgationInfo>\n");
         edxml.append("        <edXML:DocumentType>\n");
-        edxml.append("          <edXML:Type>1</edXML:Type>\n");
-        edxml.append("          <edXML:TypeName>Công văn</edXML:TypeName>\n");
+        edxml.append("          <edXML:Type>").append(meta != null && meta.type != null ? meta.type : "1").append("</edXML:Type>\n");
+        edxml.append("          <edXML:TypeDetail>").append(meta != null && meta.typeDetail != null ? meta.typeDetail : "0").append("</edXML:TypeDetail>\n");
+        edxml.append("          <edXML:TypeName>").append(meta != null && meta.typeName != null ? meta.typeName : "Công văn").append("</edXML:TypeName>\n");
         edxml.append("        </edXML:DocumentType>\n");
         edxml.append("        <edXML:Subject>").append(meta != null && meta.subject != null ? meta.subject : fileName).append("</edXML:Subject>\n");
         edxml.append("        <edXML:Content>").append(meta != null && meta.content != null ? meta.content : "File uploaded via Gateway").append("</edXML:Content>\n");
         edxml.append("        <edXML:SignerInfo>\n");
         edxml.append("          <edXML:FullName>").append(meta != null && meta.signerFullName != null ? meta.signerFullName : "Gateway Auto").append("</edXML:FullName>\n");
+        if (meta != null && meta.signerPosition != null && !meta.signerPosition.trim().isEmpty()) {
+            edxml.append("          <edXML:Position>").append(meta.signerPosition).append("</edXML:Position>\n");
+        }
         edxml.append("        </edXML:SignerInfo>\n");
         // OtherInfo (optional defaults)
         edxml.append("        <edXML:OtherInfo>\n");
-        edxml.append("          <edXML:Priority>0</edXML:Priority>\n");
-        edxml.append("          <edXML:SphereOfPromulgation>Lưu hành nội bộ</edXML:SphereOfPromulgation>\n");
-        edxml.append("          <edXML:TyperNotation>TVC</edXML:TyperNotation>\n");
-        edxml.append("          <edXML:PromulgationAmount>1</edXML:PromulgationAmount>\n");
-        edxml.append("          <edXML:PageAmount>1</edXML:PageAmount>\n");
-        edxml.append("          <edXML:Direction>false</edXML:Direction>\n");
+        edxml.append("          <edXML:Priority>").append(meta != null && meta.priority != null ? meta.priority : "0").append("</edXML:Priority>\n");
+        edxml.append("          <edXML:SphereOfPromulgation>").append(meta != null && meta.sphereOfPromulgation != null ? meta.sphereOfPromulgation : "Lưu hành nội bộ").append("</edXML:SphereOfPromulgation>\n");
+        edxml.append("          <edXML:TyperNotation>").append(meta != null && meta.typerNotation != null ? meta.typerNotation : "TVC").append("</edXML:TyperNotation>\n");
+        edxml.append("          <edXML:PromulgationAmount>").append(meta != null && meta.promulgationAmount != null ? meta.promulgationAmount : "1").append("</edXML:PromulgationAmount>\n");
+        edxml.append("          <edXML:PageAmount>").append(meta != null && meta.pageAmount != null ? meta.pageAmount : "1").append("</edXML:PageAmount>\n");
+        edxml.append("          <edXML:Direction>").append(meta != null && meta.direction != null ? meta.direction : "false").append("</edXML:Direction>\n");
+        // Append Appendixes from meta or default
         edxml.append("          <edXML:Appendixes>\n");
-        edxml.append("            <edXML:Appendix>Phụ lục</edXML:Appendix>\n");
+        if (meta != null && meta.appendixes != null && !meta.appendixes.isEmpty()) {
+            for (String appendix : meta.appendixes) {
+                edxml.append("            <edXML:Appendix>").append(appendix).append("</edXML:Appendix>\n");
+            }
+        } else {
+            edxml.append("            <edXML:Appendix>Phụ lục</edXML:Appendix>\n");
+        }
         edxml.append("          </edXML:Appendixes>\n");
         edxml.append("        </edXML:OtherInfo>\n");
         // SteeringType
-        edxml.append("        <edXML:SteeringType>1</edXML:SteeringType>\n");
+        edxml.append("        <edXML:SteeringType>").append(meta != null && meta.steeringType != null ? meta.steeringType : "1").append("</edXML:SteeringType>\n");
         // ToPlaces (optional)
-        edxml.append("        <edXML:ToPlaces>\n");
-        edxml.append("          <edXML:Place>Các bộ</edXML:Place>\n");
-        edxml.append("        </edXML:ToPlaces>\n");
+        if (meta != null && meta.toPlaces != null && !meta.toPlaces.isEmpty()) {
+            edxml.append("        <edXML:ToPlaces>\n");
+            for (String toPlace : meta.toPlaces) {
+                edxml.append("          <edXML:Place>").append(toPlace).append("</edXML:Place>\n");
+            }
+            edxml.append("        </edXML:ToPlaces>\n");
+        } else {
+            edxml.append("        <edXML:ToPlaces>\n");
+            edxml.append("          <edXML:Place>Các bộ</edXML:Place>\n");
+            edxml.append("        </edXML:ToPlaces>\n");
+        }
         edxml.append("      </edXML:MessageHeader>\n");
         // TraceHeaderList (single entry)
         edxml.append("      <edXML:TraceHeaderList>\n");
@@ -234,6 +256,26 @@ public class EdxmlBuilder {
         edxml.append("</edXML>\n");
         
         return edxml.toString();
+    }
+
+    private static String zipAndEncode(byte[] content, String filename) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ZipOutputStream zos = new ZipOutputStream(baos);
+        try {
+            String internalName = UUID.randomUUID().toString() + getExtensionLower(filename);
+            ZipEntry entry = new ZipEntry(internalName);
+            zos.putNextEntry(entry);
+            zos.write(content);
+            zos.closeEntry();
+        } finally {
+            zos.close();
+        }
+        return Base64.getEncoder().encodeToString(baos.toByteArray());
+    }
+
+    private static String getExtensionLower(String filename) {
+        int lastDot = filename.lastIndexOf('.');
+        return lastDot > 0 ? filename.substring(lastDot) : "";
     }
     
     /**
