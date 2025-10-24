@@ -1,3 +1,8 @@
 vxp.62.72.57.70.sslip.io {
     reverse_proxy vxp-gateway:8080
 }
+
+ioffice.62.72.57.70.sslip.io {
+    encode zstd gzip
+    reverse_proxy host.docker.internal:8080
+}
