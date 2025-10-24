@@ -1,0 +1,3 @@
+vxp.62.72.57.70.sslip.io {
+    reverse_proxy vxp-gateway:8080
+}
