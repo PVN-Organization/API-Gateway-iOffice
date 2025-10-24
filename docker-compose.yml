@@ -36,8 +36,8 @@ services:
     image: caddy:latest
     container_name: caddy-ssl
     ports:
-      - "80:80"
-      - "443:443"
+      - "8080:80"    # Thay vì 80:80, dùng 8080:80
+      - "8443:443"
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile
       - caddy_data:/data
