@@ -16,7 +16,7 @@ COPY ["JDK 1.8/SDKVXP_Example/resources", "./resources"]
 RUN mvn clean compile -DskipTests
 
 # Stage 2: Runtime
-FROM openjdk:8-jre-alpine
+FROM eclipse-temurin:8-jre-alpine
 
 WORKDIR /app
 
