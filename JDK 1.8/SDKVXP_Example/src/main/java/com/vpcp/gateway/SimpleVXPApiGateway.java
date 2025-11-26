@@ -98,10 +98,10 @@ public class SimpleVXPApiGateway {
             try {
                 return Integer.parseInt(args[0]);
             } catch (NumberFormatException e) {
-                System.err.println("Invalid port, using 8080");
+                System.err.println("Invalid port, using 5002");
             }
         }
-        return 8080;
+        return 5002;
     }
     
     private static String getSystemId(String[] args) {

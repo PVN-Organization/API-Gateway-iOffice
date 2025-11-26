@@ -29,7 +29,7 @@ COPY --from=builder /build/resources ./resources
 RUN apk add --no-cache wget
 
 # Environment variables với default values
-ENV GATEWAY_PORT=8080
+ENV GATEWAY_PORT=5002
 ENV SYSTEM_ID=vxp.saas.03
 ENV SECRET_KEY=A7TKG/r2gOKTEpe1MhWx6zw8O4JfzN0KkCRS6HZY81Ve
 ENV VXP_ENDPOINT=http://vxpdungchung.vnpt.vn
